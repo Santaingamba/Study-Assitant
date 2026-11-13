@@ -14,6 +14,7 @@ const cases = {     //cases is an object of objects
     "4) empty question": {...good, question: "   "},
     "5) extra field + padded spaces": {...good, question: "     What is the capital of France   ?", difficulty: "hard"}, //will pass because extra filed is stripped by zod
     "6) missing explanation": {...good, explanation: "    "},   
+    "7) formatting-only duplicate options": {...good, answer: "Paris!", distractors: [" PARIS ", "Lyon", "Nice"]},
 };
 
 for(const [name, card] of Object.entries(cases)){   //destructuring "cases", Object.entries(cases) converts objects inside cases into key value pair

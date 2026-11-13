@@ -10,7 +10,8 @@ const fakeModelText = [
   "{this is not json}",                         // broken JSON
   JSON.stringify({ question: "Only two options?", answer: "yes", distractors: ["a", "b"] }), // bad shape
   card("What is 3+3?", "6") + ",",              // trailing comma
-  card("what is 2+2?", "4"),                    // duplicate question
+  card(" WHAT is 2 + 2 ? ", "4"),               // duplicate despite case, spacing, and punctuation
+  card("ＷＨＡＴ　ＩＳ ２＋２？", "4"),            // duplicate despite Unicode width differences
   "```",                                        // closing fence
   card("What is 5+5?", "10"),                   // last line, no newline after it
 ].join("\r\n");

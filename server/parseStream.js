@@ -1,4 +1,4 @@
-import { CardSchema } from "../shared/schema.js";
+import { CardSchema, normalizeTextForComparison } from "../shared/schema.js";
 
 export function createCardParser(){
     // Keep parsing state isolated for each incoming stream.
@@ -39,8 +39,8 @@ export function createCardParser(){
             return skip(reason, line);
         }
 
-        // Normalize questions so duplicates differing only by letter case are rejected.
-        const key = result.data.question.toLocaleLowerCase();
+        // Compare a normalized form so formatting-only differences do not evade deduplication.
+        const key = normalizeTextForComparison(result.data.question);
         if(seenQuestions.has(key)) return skip("duplicate question", line);
         seenQuestions.add(key);
 

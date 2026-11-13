@@ -3,7 +3,19 @@ import { z } from "zod";
 
 const text = (max) => z.string().trim().min(1).max(500);
 
-const normalize = (s) => s.trim().toLowerCase();
+// Normalize typography and spacing for comparisons without changing displayed text.
+export const normalizeTextForComparison = (value) =>
+    value
+        .normalize("NFKC")
+        .toLowerCase()
+        .replace(/(?<=[\p{L}\p{N}])['’](?=[\p{L}\p{N}])/gu, "")
+        .replace(/\p{P}/gu, (punctuation) => punctuation === "#" ? "#" : " ")
+        .replace(/\s*#/gu, "#")
+        .replace(/\s*([\p{Sm}])\s*/gu, "$1")
+        .replace(/\s+/gu, " ")
+        .trim();
+
+const normalize = (value) => value.trim().toLowerCase();
 
 export const CardSchema = z.object({
     question: text(500),
@@ -12,8 +24,8 @@ export const CardSchema = z.object({
     explanation: z.string().trim().max(500).optional().default(""),
 })
 .superRefine((card, ctx) => {
-    //answers and distractors must all be unique
-    const options = [card.answer, ...card.distractors].map(normalize);
+    // Answers and distractors must stay unique despite formatting differences.
+    const options = [card.answer, ...card.distractors].map(normalizeTextForComparison);
 
     if(new Set(options).size !== options.length){
         ctx.addIssue({
@@ -23,7 +35,7 @@ export const CardSchema = z.object({
         });
     }
 
-    //distractors shouldn't contain the answer
+    // Keep the existing answer-containment check separate from option deduplication.
     const answer = normalize(card.answer);
 
     if(card.distractors.some((d) => normalize(d).includes(answer))){
