@@ -7,20 +7,11 @@ const normalize = (s) => s.trim().toLowerCase();
 
 export const CardSchema = z.object({
     question: text(500),
-    answer: text(500).min(2, "Answer is too short"),
+    answer: text(500).min(1, "Answer is too short"),
     distractors: z.array(text(500)).length(3),
-    explaination: z.string().trim().max(500).optional().default(""),
+    explanation: z.string().trim().max(500).optional().default(""),
 })
 .superRefine((card, ctx) => {
-    //question must end with '?'
-    if(!card.question.endsWith("?")){
-        ctx.addIssue({
-            code: z.ZodIssueCode.custom,
-            path: ["question"],
-            message: "Question should end with '?'",
-        });
-    }
-
     //answers and distractors must all be unique
     const options = [card.answer, ...card.distractors].map(normalize);
 
