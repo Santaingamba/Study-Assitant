@@ -2,8 +2,9 @@ import { streamGemini, ProviderError } from "./provider.js";
 import { buildGeneratePrompt } from "./prompt.js";
 import { createCardParser } from "./parseStream.js";
 import { mockStream } from "./mock.js";
+import { LIMITS } from "../shared/schema.js";
 
-const MAX_INPUT = 8000;
+const MAX_INPUT = LIMITS.maxInput;
 const IDLE_MS = Number(process.env.IDLE_MS) || 20_000;
 const HARD_CAP_MS = 45_000;
 // If the first reply has no usable cards, tell Gemini to return only the required JSON lines.
@@ -21,7 +22,7 @@ export async function generateHandler(req, res) {
   const mock =
     process.env.ALLOW_MOCK === "1" && typeof req.body?.mock === "string" ? req.body.mock : null;
 
-  if (text.length < 3)
+  if (text.length < LIMITS.minInput)
     return res.status(400).json({ code: "empty_input", message: "Paste some notes or type a topic first." });
   if (text.length > MAX_INPUT)
     return res.status(400).json({ code: "input_too_long", message: `Please keep your notes under ${MAX_INPUT} characters.` });

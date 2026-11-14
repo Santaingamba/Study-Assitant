@@ -46,3 +46,5 @@ export const CardSchema = z.object({
         });
     }
 });
+
+export const LIMITS = { minInput: 3, maxInput: 8000 };
