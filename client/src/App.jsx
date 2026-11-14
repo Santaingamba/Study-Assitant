@@ -1,122 +1,75 @@
-import { useState } from 'react'
-import heroImg from './assets/hero.png'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import './App.css'
+import { useState } from "react";
+import { useGeneration } from "./hooks/useGeneration.js";
+import InputPanel from "./components/InputPanel.jsx";
+import ErrorBanner from "./components/ErrorBanner.jsx";
+import EmptyState from "./components/EmptyState.jsx";
 
-function App() {
-  const [count, setCount] = useState(0)
+const NO_RETRY = new Set(["empty_input", "input_too_long"]);
 
-  return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
-        </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.jsx</code> and save to test <code>HMR</code>
-          </p>
-        </div>
-        <button
-          type="button"
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
-
-      <div className="ticks"></div>
-
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
-        </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
-
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
-  )
+function statusText(state) {
+  const n = state.cards.length;
+  if (state.status === "loading") {
+    return state.retrying ? "The first attempt didn't work. Trying once more…" : "Asking the AI…";
+  }
+  if (state.status === "streaming") return `${n} card${n === 1 ? "" : "s"} so far…`;
+  if (state.status === "done" && n > 0) {
+    const skipped = state.skipped > 0 ? ` · ${state.skipped} skipped` : "";
+    return `${n} card${n === 1 ? "" : "s"} ready${skipped}`;
+  }
+  return "";
 }
 
-export default App
+export default function App() {
+  const [text, setText] = useState("");
+  const { state, generate, cancel, dismissError } = useGeneration();
+
+  const busy = state.status === "loading" || state.status === "streaming";
+  const hasCards = state.cards.length > 0;
+  const canRetry = state.input && !NO_RETRY.has(state.error?.code);
+
+  return (
+    <main className="app">
+      <header>
+        <h1>Study assistant</h1>
+        <p>Paste notes or a topic. Get flashcards and a quiz.</p>
+      </header>
+
+      <InputPanel
+        value={text}
+        onChange={setText}
+        onSubmit={(count) => generate(text, count)}
+        onStop={cancel}
+        busy={busy}
+      />
+
+      <div className="status" aria-live="polite">
+        {statusText(state)}
+      </div>
+
+      {state.error && (
+        <ErrorBanner
+          message={state.error.message}
+          keptCards={state.cards.length}
+          onRetry={canRetry ? () => generate(state.input.text, state.input.count) : null}
+          onDismiss={dismissError}
+        />
+      )}
+
+      {state.status === "idle" && !hasCards && !state.error && <EmptyState onPick={setText} />}
+
+      {state.status === "loading" && <div className="spinner" role="status" aria-label="Loading" />}
+
+      {/* TEMPORARY: replaced by FlashcardDeck and QuizView in step 6 */}
+      {hasCards && (
+        <ul className="temp-list">
+          {state.cards.map((card) => (
+            <li key={card.id}>
+              <strong>{card.question}</strong>
+              <div>{card.answer}</div>
+            </li>
+          ))}
+        </ul>
+      )}
+    </main>
+  );
+}
