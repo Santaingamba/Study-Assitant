@@ -1,11 +1,12 @@
 const text = process.argv[2] ?? "Photosynthesis: plants turn light, water and CO2 into sugar and oxygen.";
 const abortAfterCards = Number(process.argv[3]) || 0;
+const mock = process.argv[4];
 
 const controller = new AbortController();
 const res = await fetch("http://localhost:3001/api/generate", {
   method: "POST",
   headers: { "Content-Type": "application/json" },
-  body: JSON.stringify({ text, count: 5 }),
+  body: JSON.stringify({ text, count: 5, mock }),
   signal: controller.signal,
 });
 

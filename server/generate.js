@@ -1,9 +1,10 @@
 import { streamGemini, ProviderError } from "./provider.js";
 import { buildGeneratePrompt } from "./prompt.js";
 import { createCardParser } from "./parseStream.js";
+import { mockStream } from "./mock.js";
 
 const MAX_INPUT = 8000;
-const IDLE_MS = 20_000;
+const IDLE_MS = Number(process.env.IDLE_MS) || 20_000;
 const HARD_CAP_MS = 45_000;
 // If the first reply has no usable cards, tell Gemini to return only the required JSON lines.
 const RETRY_NOTE =
@@ -17,6 +18,8 @@ export async function generateHandler(req, res) {
   const text = typeof req.body?.text === "string" ? req.body.text.trim() : "";
   // Use 10 by default and keep the requested number between 3 and 15.
   const count = Math.min(15, Math.max(3, Number(req.body?.count) || 10));
+  const mock =
+    process.env.ALLOW_MOCK === "1" && typeof req.body?.mock === "string" ? req.body.mock : null;
 
   if (text.length < 3)
     return res.status(400).json({ code: "empty_input", message: "Paste some notes or type a topic first." });
@@ -87,7 +90,10 @@ export async function generateHandler(req, res) {
     const parser = createCardParser();
     try {
       resetIdle();
-      for await (const piece of streamGemini(prompt, { signal: controller.signal })) {
+      const source = mock
+        ? mockStream(mock, prompt, controller.signal)
+        : streamGemini(prompt, { signal: controller.signal });
+      for await (const piece of source) {
         resetIdle();
         // The parser keeps partial lines between pieces and returns complete card events.
         forward(parser.push(piece));
