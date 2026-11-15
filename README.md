@@ -6,6 +6,15 @@ Turn your notes or a topic into interactive flashcards and a multiple-choice qui
 
 [https://study-assistant-2hjd.onrender.com](https://study-assistant-2hjd.onrender.com)
 
+
+> ## 📱 FULL MOBILE DEVICE SUPPORT
+>
+> **Study Assistant is fully responsive and designed to work smoothly on mobile phones and tablets, as well as desktop computers.**
+>
+> You can use the complete study experience directly from your mobile browser — no separate mobile app is required. The interface adapts to smaller screens, with flexible layouts, touch-friendly controls, readable form fields, and flashcards, quizzes, and saved sessions that fit mobile screens.
+>
+> **Whether you're studying on an Android phone, an iPhone, or a tablet, you can generate flashcards, revise answers, take quizzes, retest mistakes, and access saved sessions on the go.**
+
 Study Assistant uses a React frontend and a small Express backend. The backend sends the prompt to Gemini, streams the response to the browser, and parses and validates each card before the UI displays it.
 
 ## Features
