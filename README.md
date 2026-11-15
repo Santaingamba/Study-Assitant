@@ -13,7 +13,11 @@ Study Assistant uses a React frontend and a small Express backend. The backend s
 - **Re-test mistakes:** Review only the questions answered incorrectly.
 - **Save sessions:** Completed generations are saved in browser storage and can be reopened or deleted.
 - **Handle unreliable model output:** Validate card structure, ignore irrelevant text, skip malformed or duplicate cards, report errors, and retry once when no usable card was received.
-- **Test without API calls:** Optional mock streams simulate normal, malformed, slow, interrupted, empty, and rate-limited responses.
+- **Clear application states:** Show an initial empty state, a loading skeleton, live generation status, and actionable error messages with retry and dismiss options.
+- **Safe request handling:** Cancel an earlier request when a new one starts, support manual stopping, and ignore stale events so an older response cannot overwrite newer results.
+- **Keep partial progress:** Cards received before a stream or provider failure remain available while the error is displayed.
+- **Responsive and accessible UI:** Adapt the interface for small screens, support flashcard arrow-key navigation, announce status updates, and move focus to new quiz questions.
+- **Test without API calls:** Optional mock streams simulate normal, malformed, slow, interrupted, empty, hanging, stalled, upstream-failure, and rate-limited responses.
 
 ## Tech stack
 
@@ -97,6 +101,8 @@ Run it after creating and configuring `.env`. If you leave `PORT` empty, the bac
 6. Answer each multiple-choice question. At the end, review the score and re-test missed questions.
 7. Reopen or delete completed sessions from **Saved sessions**.
 
+In the flashcard deck, use the **Left** and **Right** arrow keys to move between cards. You can also press **Ctrl+Enter** (or **Cmd+Enter** on macOS) in the notes field to submit.
+
 The application accepts input between 3 and 8,000 JavaScript string-length units. The backend defaults to a 20-second idle timeout and a 45-second hard limit per generation attempt. It retries once only when the first attempt produced no accepted cards and the result is retryable (or contained no usable cards).
 
 ## Development and tests
@@ -160,7 +166,7 @@ The model is instructed to return one JSON card per line. The server does not re
 5. Valid cards are sent to the browser as SSE `card` events.
 6. The client validates incoming card data again before adding it to React state.
 
-The server sends separate `retry`, `skipped`, `error`, and `done` events where appropriate. If an error occurs after some cards have arrived, those cards remain visible and the error is reported as a partial result.
+The server sends separate `retry`, `skipped`, `error`, and `done` events where appropriate. If an error occurs after some cards have arrived, those cards remain visible and the error is reported as a partial result. See [Features and Error Handling](./FEATURES_AND_ERROR_HANDLING.md) for the timeout policy, provider error mapping, cancellation behaviour, persistence safeguards, and the full failure-handling flow.
 
 ## Project structure
 
