@@ -4,12 +4,10 @@ services:
     runtime: node
     plan: free
     region: singapore
-    buildCommand: npm install && npm run build
-    startCommand: npm run start:prod
+    buildCommand: npm install --include=dev && npm run build
+    startCommand: NODE_ENV=production npm run start:prod
     healthCheckPath: /api/health
     envVars:
-      - key: NODE_ENV
-        value: production
       - key: ALLOW_MOCK
         value: "0"
       - key: IDLE_MS
