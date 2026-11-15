@@ -254,3 +254,37 @@ select { padding: 8px 10px; min-height: 44px; }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation: none !important; transition: none !important; }
 }
+
+/* ---------- Saved sessions ---------- */
+.sessions { margin-top: 24px; }
+.sessions h2 { margin: 0 0 8px; font-size: 1.1rem; }
+.session-list { list-style: none; margin: 0; padding: 2px 2px 4px; display: grid; gap: 8px; max-height: 360px; overflow-y: auto; }
+.session-item {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 12px 16px;
+  animation: fade-up 0.3s ease-out backwards;
+}
+.session-info { display: grid; flex: 1 1 200px; min-width: 0; }
+.session-info .muted { font-size: 0.85rem; }
+.session-actions { display: flex; gap: 8px; }
+.notice {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin: 0 0 8px;
+  padding: 10px 14px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  color: var(--muted);
+}
