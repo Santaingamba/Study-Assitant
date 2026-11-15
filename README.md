@@ -207,7 +207,7 @@ Claude and ChatGPT were used during development for implementation guidance, cod
 
 ## Demo recording
 
-Add the link to the short screen recording here after uploading it.
+Screen Recording Link: https://drive.google.com/file/d/1XMnoJeJ-dZPdsEweBH6FrjOJEWwIuhmr/view?usp=drive_link
 
 ## Time spent
 
