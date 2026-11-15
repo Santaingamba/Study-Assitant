@@ -7,7 +7,7 @@ export const makeId = () => `c${Date.now().toString(36)}${(counter++).toString(3
 
 // Dev only: open http://localhost:5173/?mock=messy to trigger a fake failure
 function readMock() {
-  if (!import.meta.env.DEV) return undefined;
+  if (!import.meta.env.DEV || typeof window === "undefined") return undefined;
   return new URLSearchParams(window.location.search).get("mock") ?? undefined;
 }
 
