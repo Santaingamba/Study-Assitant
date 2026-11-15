@@ -199,6 +199,10 @@ Claude and ChatGPT were used during development for implementation guidance, cod
 - Authentication, cloud persistence, and a production deployment configuration are not included.
 - The repository's `npm start` command starts the local development server and Vite dev server; it is not a production process manager.
 
+## Demo recording
+
+Add the link to the short screen recording here after uploading it.
+
 ## Time spent
 
 **Update this value before submitting:** `[enter your actual total hours]`.
