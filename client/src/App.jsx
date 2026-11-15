@@ -49,7 +49,7 @@ export default function App() {
         busy={busy}
       />
 
-      <div className="status" aria-live="polite">
+      <div className={busy ? "status busy" : "status"} aria-live="polite">
         {statusText(state)}
       </div>
 
@@ -64,7 +64,13 @@ export default function App() {
 
       {state.status === "idle" && !hasCards && !state.error && <EmptyState onPick={setText} />}
 
-      {state.status === "loading" && <div className="spinner" role="status" aria-label="Loading" />}
+      {state.status === "loading" && (
+        <div className="skeleton-card" aria-hidden="true">
+          <span className="skeleton-line w30" />
+          <span className="skeleton-line w90" />
+          <span className="skeleton-line w60" />
+        </div>
+      )}
 
       {hasCards && (
         <section className="study">

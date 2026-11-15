@@ -36,7 +36,7 @@ export default function QuizView({ cards }) {
   const isLast = state.index + 1 === state.questions.length;
 
   return (
-    <section className="quiz">
+        <section className="quiz" key={`${state.round}-${state.index}`}>
       <p className="quiz-progress">
         {state.round > 1 && `Re-test · `}Question {state.index + 1} of {state.questions.length}
       </p>
