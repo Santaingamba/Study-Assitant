@@ -2,6 +2,10 @@
 
 Turn your notes or a topic into interactive flashcards and a multiple-choice quiz.
 
+## Live Demo
+
+[https://study-assistant-2hjd.onrender.com](https://study-assistant-2hjd.onrender.com)
+
 Study Assistant uses a React frontend and a small Express backend. The backend sends the prompt to Gemini, streams the response to the browser, and parses and validates each card before the UI displays it.
 
 ## Features
