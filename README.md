@@ -205,6 +205,16 @@ Add the link to the short screen recording here after uploading it.
 
 ## Time spent
 
-**Update this value before submitting:** `[enter your actual total hours]`.
+**Approximately 9 hours** across November 10–15, reconstructed from development sessions, progress, and the original 23 development commits.
 
-The assignment suggests aiming for approximately eight hours and asks that the actual time spent be reported honestly.
+| Date | Work completed | Estimated time |
+| --- | --- | ---: |
+| **November 10** | Initial project setup: React/Vite client, Express server, npm scripts, and development workflow. | 45 min |
+| **November 11** | Defined the flashcard data structure, added Zod validation, and built the prompt generator. | 1 hr |
+| **November 13** | Integrated Gemini streaming, developed the line-by-line response parser, handled malformed JSON and duplicate cards, and mapped provider errors. | 2 hrs |
+| **November 14** | Built the streaming API route and frontend integration, including SSE events, retries, timeouts, cancellation, mock provider modes, and generation state handling. | 2 hrs |
+| **November 15** | Implemented the flashcard deck, quiz flow, results summary, missed-question retest, and study/quiz mode switching. | 1 hr 30 min |
+| **November 15** | Added versioned session persistence, autosave and session reopening, automated tests, UI refinements, and a stale-response bug fix. | 1 hr 45 min |
+|  | **Total estimated time** | **9 hrs** |
+
+**Brief note:** The time above is an approximation, not an exact timesheet, because I did not track every work session. The assignment took longer than I initially expected as I had to learn and apply concepts such as SSE, Gemini streaming, incremental parsing, request cancellation, structured validation, and asynchronous React state. I also spent time testing edge cases, adding persistence and tests, and fixing bugs to make the application more reliable.
