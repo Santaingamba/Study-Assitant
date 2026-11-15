@@ -27,17 +27,23 @@ export default function FlashcardDeck({ cards }) {
         className={flipped ? "flashcard flipped" : "flashcard"}
         onClick={() => setFlipped((f) => !f)}
       >
-        <span className="flashcard-inner">
-          <span className="face face-front" aria-hidden={flipped}>
-            <span className="face-label">Question</span>
-            <span>{card.question}</span>
-            <span className="face-hint">Tap to see the answer</span>
-          </span>
-          <span className="face face-back" aria-hidden={!flipped}>
-            <span className="face-label">Answer</span>
-            <strong>{card.answer}</strong>
-            {card.explanation && <span className="face-note">{card.explanation}</span>}
-            <span className="face-hint">Tap to see the question</span>
+        {/* key={card.id}: moving to another card replaces this wrapper, so the new card
+            appears already facing front and fades in. Without it, the old card would
+            rotate back while already showing the NEW card's answer. The button itself
+            is not remounted, so keyboard focus stays on it. */}
+        <span className="card-wrap" key={card.id}>
+          <span className="flashcard-inner">
+            <span className="face face-front" aria-hidden={flipped}>
+              <span className="face-label">Question</span>
+              <span>{card.question}</span>
+              <span className="face-hint">Tap to see the answer</span>
+            </span>
+            <span className="face face-back" aria-hidden={!flipped}>
+              <span className="face-label">Answer</span>
+              <strong>{card.answer}</strong>
+              {card.explanation && <span className="face-note">{card.explanation}</span>}
+              <span className="face-hint">Tap to see the question</span>
+            </span>
           </span>
         </span>
       </button>
