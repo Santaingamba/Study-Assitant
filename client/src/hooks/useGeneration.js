@@ -36,8 +36,20 @@ export function useGeneration() {
     dispatch({ type: "dismiss", requestId: counterRef.current });
   }, []);
 
+  // Opening a saved session: stop any running stream, then show the saved cards. No network call.
+  const load = useCallback((session) => {
+    controllerRef.current?.abort();
+    dispatch({
+      type: "load",
+      requestId: ++counterRef.current,
+      input: session.input,
+      cards: session.cards,
+      skipped: session.skipped,
+    });
+  }, []);
+
   // Leaving the page cancels the stream
   useEffect(() => () => controllerRef.current?.abort(), []);
 
-  return { state, generate, cancel, dismissError };
+  return { state, generate, cancel, dismissError, load };
 }

@@ -1,6 +1,7 @@
 export const initialState = {
   status: "idle", // idle | loading | streaming | done | error
   requestId: 0,
+  source: "ai",   // "ai" = just generated, "saved" = opened from the saved list (never auto-saved again)
   input: null,    // { text, count } of the latest request, kept for "Try again"
   cards: [],
   skipped: 0,
@@ -9,9 +10,20 @@ export const initialState = {
 };
 
 export function generationReducer(state, action) {
-  // These two don't belong to any stream, so they skip the stale check
+  // These actions don't belong to any stream, so they skip the stale check
   if (action.type === "start") {
     return { ...initialState, status: "loading", requestId: action.requestId, input: action.input };
+  }
+  if (action.type === "load") {
+    return {
+      ...initialState,
+      status: "done",
+      requestId: action.requestId,
+      source: "saved",
+      input: action.input,
+      cards: action.cards,
+      skipped: action.skipped,
+    };
   }
   if (action.type === "reset") {
     return { ...initialState, requestId: action.requestId };
