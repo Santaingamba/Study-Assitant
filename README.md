@@ -105,6 +105,30 @@ In the flashcard deck, use the **Left** and **Right** arrow keys to move between
 
 The application accepts input between 3 and 8,000 JavaScript string-length units. The backend defaults to a 20-second idle timeout and a 45-second hard limit per generation attempt. It retries once only when the first attempt produced no accepted cards and the result is retryable (or contained no usable cards).
 
+## Deploy to Render
+
+The repository includes a Render Blueprint in `render.yaml` for deploying the React frontend and Express API together as one web service.
+
+1. Push the repository to GitHub.
+2. Sign in to [Render](https://render.com/) and choose **New → Blueprint**.
+3. Connect the `Santaingamba/Study-Assitant` repository and deploy the Blueprint.
+4. When prompted for the two secret environment variables, enter:
+   - `GEMINI_API_KEY`: your Gemini API key.
+   - `GEMINI_MODEL`: a model ID available to that API key.
+5. Wait for the build and deployment to finish. Open the `*.onrender.com` URL shown by Render.
+6. Check `/api/health` on that URL; it should return `{"ok":true}`.
+
+The Blueprint sets `NODE_ENV=production`, disables mock mode, configures the idle timeout, builds the Vite app, and starts Express. Express serves the compiled frontend and the API from the same origin, so the client can keep using the relative `/api` endpoint. The Gemini key belongs in Render's environment settings only; never add it to the repository or a frontend variable.
+
+**Free-instance note:** Render's free web services may spin down after inactivity. The first request after a spin-down can take longer while the service starts. Keep the app's API key private and review the current Render plan limits before relying on the service for a time-sensitive demo.
+
+For local development, continue to use `npm start`. For a production-style local run, build the client and start only Express:
+
+```bash
+npm run build
+NODE_ENV=production npm run start:prod
+```
+
 ## Development and tests
 
 Run the automated test suite:
@@ -187,6 +211,8 @@ The server sends separate `retry`, `skipped`, `error`, and `done` events where a
 ├── shared/
 │   └── schema.js           # Shared Zod schema and input limits
 ├── .env.example
+├── .node-version
+├── render.yaml
 ├── package.json
 └── README.md
 ```
@@ -202,7 +228,7 @@ Claude and ChatGPT were used during development for implementation guidance, cod
 - Generation is limited by the configured idle and hard timeouts. A retry is attempted at most once and only when no valid cards were accepted in the first attempt.
 - Saved sessions use the current browser's local storage. They are not synced across devices or accounts and may be unavailable if browser storage is blocked or cleared.
 - The session store keeps at most 20 sessions and up to 100 cards per session.
-- Authentication, cloud persistence, and a production deployment configuration are not included.
+- Authentication and cloud persistence are not included. Saved sessions remain in each visitor's browser storage.
 - The repository's `npm start` command starts the local development server and Vite dev server; it is not a production process manager.
 
 ## Demo recording
