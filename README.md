@@ -26,7 +26,7 @@ Study Assistant uses a React frontend and a small Express backend. The backend s
 
 ## Requirements
 
-- Node.js **20.19.0 or newer in the 20.x line**, or **22.12.0 or newer in the 22.x line**. This matches the Vite version recorded in `client/package-lock.json`.
+- Node.js **20.19.0 or newer**, or **22.12.0 or newer**. This matches the Vite version recorded in `client/package-lock.json`.
 - npm
 - A Gemini API key and a Gemini model ID for live generation
 
