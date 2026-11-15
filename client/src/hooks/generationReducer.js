@@ -10,7 +10,7 @@ export const initialState = {
 };
 
 export function generationReducer(state, action) {
-  // These actions don't belong to any stream, so they skip the stale check
+  // User actions and fresh starts don't belong to any stream, so they skip the stale check
   if (action.type === "start") {
     return { ...initialState, status: "loading", requestId: action.requestId, input: action.input };
   }
@@ -27,6 +27,20 @@ export function generationReducer(state, action) {
   }
   if (action.type === "reset") {
     return { ...initialState, requestId: action.requestId };
+  }
+  if (action.type === "cancel") {
+    // Only meaningful while a request is running
+    if (state.status !== "loading" && state.status !== "streaming") return state;
+    return {
+      ...state,
+      requestId: action.requestId, // from now on, events of the cancelled stream are ignored
+      status: state.cards.length > 0 ? "done" : "idle",
+      retrying: false,
+    };
+  }
+  if (action.type === "dismiss") {
+    if (!state.error) return state;
+    return { ...state, error: null, status: state.cards.length > 0 ? "done" : "idle" };
   }
 
   // Everything else comes from a stream. Ignore it if it's from an old request.
@@ -48,15 +62,6 @@ export function generationReducer(state, action) {
         retrying: false,
         error: { code: action.code, message: action.message, partial: state.cards.length > 0 },
       };
-    case "cancel":
-      return {
-        ...state,
-        requestId: action.requestId, // from now on, events of the cancelled stream are ignored
-        status: state.cards.length > 0 ? "done" : "idle",
-        retrying: false,
-      };
-    case "dismiss":
-      return { ...state, error: null, status: state.cards.length > 0 ? "done" : "idle" };
     default:
       return state;
   }
